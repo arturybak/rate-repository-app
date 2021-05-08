@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
+  console.log('logging test');
   return (
     <View style={styles.container}>
       <Text>hey flops</Text>
