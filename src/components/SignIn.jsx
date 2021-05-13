@@ -5,6 +5,9 @@ import FormikTextInput from './FormikTextInput';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import theme from '../theme';
+import useSignIn from '../hooks/useSignIn';
+import { useHistory } from "react-router-dom";
+
 
 const styles = StyleSheet.create({
     container: {
@@ -56,8 +59,22 @@ const SignInForm = ({ onSubmit }) => {
 
 
 const SignIn = () => {
-    const onSubmit = (values) => {
-        console.log(values);
+    const [signIn] = useSignIn();
+    let history = useHistory();
+
+    const onSubmit = async (values) => {
+        const { username, password } = values;
+
+        try {
+            const response = await signIn({ username, password });
+            if (response) {
+                history.push('/');
+            }
+
+        } catch (error) {
+            console.log('login error', error);
+
+        }
     };
     return (
         <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
