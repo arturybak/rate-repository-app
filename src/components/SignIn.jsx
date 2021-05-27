@@ -6,7 +6,7 @@ import { Formik } from 'formik';
 import * as yup from 'yup';
 import theme from '../theme';
 import useSignIn from '../hooks/useSignIn';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 
 
 const styles = StyleSheet.create({
@@ -46,17 +46,23 @@ const validationSchema = yup.object().shape({
 const SignInForm = ({ onSubmit }) => {
     return (
         <View style={styles.container}>
-            <FormikTextInput name="username" placeholder="Username" />
-            <FormikTextInput name="password" placeholder="Password" secureTextEntry />
+            <FormikTextInput name='username' placeholder='Username' testID='usernameField' />
+            <FormikTextInput name='password' placeholder='Password' secureTextEntry testID='passwordField' />
 
-            <Pressable onPress={onSubmit} style={styles.button}>
+            <Pressable onPress={onSubmit} style={styles.button} testID='submitButton'>
                 <Text style={styles.submit}>Sign In</Text>
             </Pressable>
         </View>
     );
 };
 
-
+export const SignInContainer = ({ onSubmit, initialValues }) => {
+    return (
+        <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
+            {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
+        </Formik>
+    );
+};
 
 const SignIn = () => {
     const [signIn] = useSignIn();
@@ -66,20 +72,15 @@ const SignIn = () => {
         const { username, password } = values;
 
         try {
-            const response = await signIn({ username, password });
-            if (response) {
-                history.push('/');
-            }
-
+            await signIn({ username, password });
+            history.push('/');
         } catch (error) {
             console.log('login error', error);
 
         }
     };
     return (
-        <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
-            {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
-        </Formik>
+        <SignInContainer onSubmit={onSubmit} initialValues={initialValues} />
     );
 };
 
